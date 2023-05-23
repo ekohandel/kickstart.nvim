@@ -20,6 +20,7 @@ return {
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
+    'mfussenegger/nvim-dap-python',
   },
   config = function()
     local dap = require 'dap'
@@ -28,7 +29,7 @@ return {
     require('mason-nvim-dap').setup {
       -- Makes a best effort to setup the various debuggers with
       -- reasonable debug configurations
-      automatic_setup = true,
+      -- automatic_setup = true,
 
       -- You can provide additional configuration to the handlers,
       -- see mason-nvim-dap README for more information
@@ -38,6 +39,8 @@ return {
       -- online, please don't ask me how to install them :)
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
+        'codelldb',
+        'debugpy',
         'delve',
       },
     }
@@ -82,5 +85,35 @@ return {
 
     -- Install golang specific config
     require('dap-go').setup()
+
+    -- Install python specific config
+    require('dap-python').setup()
+
+    -- Install C/C++ config
+    dap.adapters.codelldb = {
+      type = 'server',
+      port = "${port}",
+      executable = {
+        command = vim.fn.stdpath 'data' .. '/mason/bin/codelldb',
+        args = {"--port", "${port}"},
+      }
+    }
+    dap.configurations.cpp = {
+      {
+        name = "Launch file",
+        type = "codelldb",
+        request = "launch",
+        program = function()
+          return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+        end,
+        args = function()
+          return vim.fn.input('Program arguments: ')
+        end,
+        cwd = '${workspaceFolder}',
+        stopOnEntry = false,
+      },
+    }
+    dap.configurations.c = dap.configurations.cpp
+
   end,
 }

@@ -193,11 +193,13 @@ require('lazy').setup({
     build = ':TSUpdate',
   },
 
+  'simrat39/rust-tools.nvim',
+
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
   -- require 'kickstart.plugins.autoformat',
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
 
   -- NOTE: The import below automatically adds your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
@@ -462,6 +464,20 @@ mason_lspconfig.setup_handlers {
       capabilities = capabilities,
       on_attach = on_attach,
       settings = servers[server_name],
+    }
+  end,
+  ["rust_analyzer"] = function()
+    require("rust-tools").setup {
+      server = {
+        on_attach = function(_, bufnr)
+          vim.keymap.set("n", "<C-space>", require("rust-tools").hover_actions.hover_actions, { buffer = bufnr })
+        end,
+      },
+      dap = {
+        adapter = {
+          command = 'lldb-vscode-14'
+        }
+      }
     }
   end,
 }
