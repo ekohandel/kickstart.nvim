@@ -1,9 +1,9 @@
 return {
   'pwntester/octo.nvim',
-  requires = {
+  dependencies = {
     'nvim-lua/plenary.nvim',
     'nvim-telescope/telescope.nvim',
-    'kyazdani42/nvim-web-devicons',
+    'nvim-tree/nvim-web-devicons',
   },
   config = function ()
     require"octo".setup()
